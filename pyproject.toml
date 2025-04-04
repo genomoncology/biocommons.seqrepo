@@ -20,7 +20,7 @@ dependencies = [
     "bioutils > 0.4",
     "coloredlogs ~= 15.0",
     "ipython ~= 8.4",
-    "pysam ~= 0.22",
+    "pysam @ git+https://github.com/genomoncology/pysam.git@test-fasta-file-fetch-only",
     "requests ~= 2.31",
     "tqdm ~= 4.66",
     "typing_extensions",

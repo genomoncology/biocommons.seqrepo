@@ -28,12 +28,11 @@ def test_write_reread():
     # now read them back
     far = FabgzReader(fabgz_fn)
     assert far.filename.startswith(tmpdir.encode())  # type: ignore
-    assert set(far.keys()) == set(sequences.keys())
-    assert 5 == len(far), "expected 5 sequences"  # type: ignore
-    assert "l10" in far.keys()
-    assert far["l10"] == seed * 10
-    for seq_id in far.keys():
-        assert far.fetch(seq_id) == sequences[seq_id]
+    assert far.fetch("l1") == seed * 1
+    assert far.fetch("l10") == seed * 10
+    assert far.fetch("l100") == seed * 100
+    assert far.fetch("l1000") == seed * 1000
+    assert far.fetch("l10000") == seed * 10000
 
     shutil.rmtree(tmpdir)
 

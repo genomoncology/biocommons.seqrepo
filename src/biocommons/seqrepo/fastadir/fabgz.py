@@ -17,7 +17,7 @@ import threading
 from types import TracebackType
 from typing import Optional, Type
 
-from pysam import FastaFile
+from pysam import FastaFileFetchOnly
 from typing_extensions import Self
 
 _logger = logging.getLogger(__name__)
@@ -78,7 +78,7 @@ class FabgzReader(object):
 
     def __init__(self, filename: str) -> None:
         self.lock = threading.Lock()
-        self._fh = FastaFile(filename)
+        self._fh = FastaFileFetchOnly(filename)
 
     def __del__(self) -> None:
         self._fh.close()
@@ -94,12 +94,6 @@ class FabgzReader(object):
 
     def fetch(self, seq_id: str, start: Optional[int] = None, end: Optional[int] = None):
         return self._fh.fetch(seq_id.encode("ascii"), start, end)  # type: ignore
-
-    def keys(self):
-        return self._fh.references
-
-    def __len__(self) -> Optional[int]:
-        return self._fh.nreferences
 
     def __getitem__(self, ac: str) -> str:
         return self.fetch(ac)
@@ -159,8 +153,8 @@ class FabgzWriter(object):
             subprocess.check_call([self._bgzip_exe, "--force", self._basepath])
             os.rename(self._basepath + ".gz", self.filename)
 
-            # open file with FastaFile to create indexes, then make all read-only
-            _fh = FastaFile(self.filename)
+            # open file with FastaFileFetchOnly to create indexes, then make all read-only
+            _fh = FastaFileFetchOnly(self.filename)
             _fh.close()
             os.chmod(self.filename, stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
             os.chmod(self.filename + ".fai", stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
