@@ -77,8 +77,15 @@ class FabgzReader(object):
     """
 
     def __init__(self, filename: str) -> None:
+        index_fai = filename + ".fai"
+        index_gzi = filename + ".gzi"
+
         self.lock = threading.Lock()
-        self._fh = FastaFileFetchOnly(filename)
+        self._fh = FastaFileFetchOnly(
+            filename,
+            filepath_index=index_fai,
+            filepath_index_compressed=index_gzi,
+        )
 
     def __del__(self) -> None:
         self._fh.close()
